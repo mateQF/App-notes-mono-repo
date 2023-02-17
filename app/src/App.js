@@ -1,120 +1,46 @@
-import './App.css'
-import { useEffect, useState } from 'react'
-import { Note } from './components/Note'
-import {
-  create as createNote,
-  getAll as getAllNotes,
-  update as updateNote,
-  setToken
-} from './services/notes'
-import { login } from './services/login'
-import LoginForm from './components/LoginForm'
-import CreateNoteForm from './components/CreateNoteForm'
+import React, { useState } from 'react'
 
-export default function App () {
-  const [notes, setNotes] = useState([])
-  const [error, setError] = useState('')
+const Home = () => <h1>Home</h1>
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+const Notes = () => <h1>Notes</h1>
 
-  useEffect(() => {
-    getAllNotes().then((notes) => {
-      setNotes(notes)
-    })
-  }, [])
+const Users = () => <h1>Users</h1>
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
-    const user = JSON.parse(loggedUserJSON)
-    setUser(user)
-    if (user) {
-      setToken(user.token)
+const inlineStyles = {
+  padding: 8
+}
+const App = () => {
+  const [page, setPage] = useState(() => {
+    const { pathname } = window.location
+    const page = pathname.slice(1)
+    return page
+  })
+
+  const getContent = () => {
+    if (page === 'notes') {
+      return <Notes />
+    } else if (page === 'users') {
+      return <Users />
+    } else {
+      return <Home />
     }
-  }, [])
-
-  const addNote = (noteToAdd) => {
-    createNote(noteToAdd)
-      .then((newNote) => {
-        setNotes([...notes, newNote])
-      })
-      .catch((err) => {
-        console.log(err)
-        setError(err)
-      })
   }
 
-  const toggleImportanceOf = (id) => {
-    const note = notes.find((note) => note.id === id)
-    const changedNote = { ...note, important: !note.important }
-
-    updateNote(id, changedNote).then(returnedNote => {
-      setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-    }).catch(err => {
-      setError(err)
-      console.log(err)
-    })
-  }
-
-  const handleLogin = async (e) => {
+  const toPage = page => e => {
     e.preventDefault()
-
-    try {
-      const user = await login({
-        username,
-        password
-      })
-
-      window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(user))
-      setToken(user.token)
-
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (err) {
-      setError('Wrong credentials')
-      setTimeout(() => {
-        setError('')
-      }, 5000)
-    }
+    window.history.pushState(null, '', `/${page}`)
+    setPage(page)
   }
-
-  const handleLogOut = () => {
-    setUser(null)
-    setToken(user.token)
-    window.localStorage.removeItem('loggedNoteAppUser')
-  }
-
   return (
     <div>
-      <h1>NOTES APP</h1>
-      {user
-        ? (
-          <>
-            <CreateNoteForm
-              addNote={addNote}
-              handleLogOut={handleLogOut}
-            />
-            <ol>
-              {notes.map((note) => (
-                <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOf(note.id) }} />
-              ))}
-            </ol>
-          </>
-          )
-        : (
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          )}
-      <div className='error'>
-        {error ? <span style={{ color: 'red' }}>{error}</span> : ''}
-      </div>
+      <header>
+        <a href='#' onClick={toPage('home')} style={inlineStyles}>Home</a>
+        <a href='#' onClick={toPage('notes')} style={inlineStyles}>Notes</a>
+        <a href='#' onClick={toPage('users')} style={inlineStyles}>Users</a>
+      </header>
+      {getContent()}
     </div>
   )
 }
+
+export default App
