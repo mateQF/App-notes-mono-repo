@@ -1,45 +1,61 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { getAll as getAllNotes, setToken } from './services/notes'
+import { Link, BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import Notes from './Notes'
+import { NoteDetail } from './components/NoteDetail'
+import Login from './Login'
 
 const Home = () => <h1>Home</h1>
-
-const Notes = () => <h1>Notes</h1>
 
 const Users = () => <h1>Users</h1>
 
 const inlineStyles = {
   padding: 8
 }
+
 const App = () => {
-  const [page, setPage] = useState(() => {
-    const { pathname } = window.location
-    const page = pathname.slice(1)
-    return page
-  })
+  const [notes, setNotes] = useState([])
+  const [user, setUser] = useState(null)
 
-  const getContent = () => {
-    if (page === 'notes') {
-      return <Notes />
-    } else if (page === 'users') {
-      return <Users />
-    } else {
-      return <Home />
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
+    const user = JSON.parse(loggedUserJSON)
+    setUser(user)
+    if (user) {
+      setToken(user.token)
     }
-  }
+  }, [])
 
-  const toPage = page => e => {
-    e.preventDefault()
-    window.history.pushState(null, '', `/${page}`)
-    setPage(page)
-  }
+  useEffect(() => {
+    getAllNotes().then((notes) => {
+      setNotes(notes)
+    })
+  }, [])
+
   return (
-    <div>
+    <BrowserRouter>
       <header>
-        <a href='#' onClick={toPage('home')} style={inlineStyles}>Home</a>
-        <a href='#' onClick={toPage('notes')} style={inlineStyles}>Notes</a>
-        <a href='#' onClick={toPage('users')} style={inlineStyles}>Users</a>
+        <Link to='/' style={inlineStyles}>Home</Link>
+        <Link to='/notes' style={inlineStyles}>Notes</Link>
+        <Link to='/users' style={inlineStyles}>Users</Link>
+        {
+          user
+            ? <em>Logged as {user.name}</em>
+            : <Link to='/login' style={inlineStyles}>Login</Link>
+        }
       </header>
-      {getContent()}
-    </div>
+      <Routes>
+        <Route path='/notes/:id' element={<NoteDetail notes={notes} />} />
+        <Route path='/notes' element={<Notes />} />
+        <Route path='/users' element={<Users />} />
+        <Route
+          path='/login' element={
+        user ? <Navigate to='/' replace /> : <Login />
+      }
+        />
+        <Route path='/' element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

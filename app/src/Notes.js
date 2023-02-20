@@ -7,16 +7,13 @@ import {
   update as updateNote,
   setToken
 } from './services/notes'
-import { login } from './services/login'
-import LoginForm from './components/LoginForm'
 import CreateNoteForm from './components/CreateNoteForm'
+import Login from './Login'
 
 export default function App () {
   const [notes, setNotes] = useState([])
   const [error, setError] = useState('')
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   useEffect(() => {
@@ -57,29 +54,6 @@ export default function App () {
     })
   }
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-
-    try {
-      const user = await login({
-        username,
-        password
-      })
-
-      window.localStorage.setItem('loggedNoteAppUser', JSON.stringify(user))
-      setToken(user.token)
-
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (err) {
-      setError('Wrong credentials')
-      setTimeout(() => {
-        setError('')
-      }, 5000)
-    }
-  }
-
   const handleLogOut = () => {
     setUser(null)
     setToken(user.token)
@@ -103,15 +77,7 @@ export default function App () {
             </ol>
           </>
           )
-        : (
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          )}
+        : (<Login />)}
       <div className='error'>
         {error ? <span style={{ color: 'red' }}>{error}</span> : ''}
       </div>
