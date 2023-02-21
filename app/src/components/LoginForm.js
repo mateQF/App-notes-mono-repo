@@ -1,33 +1,29 @@
 import React from 'react'
-
 import { Toggleable } from './Toggleable'
+import { useField } from '../hooks/useField'
+
 export default function LoginForm ({
-  handleSubmit,
-  handlePasswordChange,
-  handleUsernameChange,
-  username,
-  password
+  handleSubmit
 }) {
+  const username = useField({ type: 'text' })
+  const password = useField({ type: 'password' })
+
   return (
     <Toggleable buttonLabel='Go login!'>
       <div>
         <form onSubmit={handleSubmit} data-test-id='login-form'>
           <div>
             <input
-              type='text'
-              value={username}
+              {...username}
               name='Username'
               placeholder='Username'
-              onChange={handleUsernameChange}
             />
           </div>
           <div>
             <input
-              type='password'
-              value={password}
+              {...password}
               name='Password'
               placeholder='Password'
-              onChange={handlePasswordChange}
             />
           </div>
           <button id='form-login-button'>Login</button>

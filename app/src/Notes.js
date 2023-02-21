@@ -1,63 +1,23 @@
 import './App.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useNotes } from './hooks/useNotes'
 import { Note } from './components/Note'
-import {
-  create as createNote,
-  getAll as getAllNotes,
-  update as updateNote,
-  setToken
-} from './services/notes'
 import CreateNoteForm from './components/CreateNoteForm'
 import Login from './Login'
+import { useUser } from './hooks/useUser'
 
-export default function App () {
-  const [notes, setNotes] = useState([])
+export default function Notes () {
+  const { notes, addNote, toggleImportanceOf } = useNotes()
+  const { user, logout } = useUser()
   const [error, setError] = useState('')
 
-  const [user, setUser] = useState(null)
-
-  useEffect(() => {
-    getAllNotes().then((notes) => {
-      setNotes(notes)
+  const toggleImportanceOfNote = (id) => {
+    toggleImportanceOf(id).catch(() => {
+      setError('Note was already removed from server')
+      setTimeout(() => {
+        setError(null)
+      }, 5000)
     })
-  }, [])
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
-    const user = JSON.parse(loggedUserJSON)
-    setUser(user)
-    if (user) {
-      setToken(user.token)
-    }
-  }, [])
-
-  const addNote = (noteToAdd) => {
-    createNote(noteToAdd)
-      .then((newNote) => {
-        setNotes([...notes, newNote])
-      })
-      .catch((err) => {
-        console.log(err)
-        setError(err)
-      })
-  }
-
-  const toggleImportanceOf = (id) => {
-    const note = notes.find((note) => note.id === id)
-    const changedNote = { ...note, important: !note.important }
-
-    updateNote(id, changedNote).then(returnedNote => {
-      setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-    }).catch(err => {
-      setError(err)
-      console.log(err)
-    })
-  }
-
-  const handleLogOut = () => {
-    setUser(null)
-    setToken(user.token)
-    window.localStorage.removeItem('loggedNoteAppUser')
   }
 
   return (
@@ -68,11 +28,11 @@ export default function App () {
           <>
             <CreateNoteForm
               addNote={addNote}
-              handleLogOut={handleLogOut}
+              handleLogOut={logout}
             />
             <ol>
               {notes.map((note) => (
-                <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOf(note.id) }} />
+                <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOfNote(note.id) }} />
               ))}
             </ol>
           </>
