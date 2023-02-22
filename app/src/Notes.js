@@ -5,6 +5,7 @@ import { Note } from './components/Note'
 import CreateNoteForm from './components/CreateNoteForm'
 import Login from './Login'
 import { useUser } from './hooks/useUser'
+import Table from 'react-bootstrap/Table'
 
 export default function Notes () {
   const { notes, addNote, toggleImportanceOf } = useNotes()
@@ -30,11 +31,15 @@ export default function Notes () {
               addNote={addNote}
               handleLogOut={logout}
             />
-            <ol>
-              {notes.map((note) => (
-                <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOfNote(note.id) }} />
-              ))}
-            </ol>
+            <Table striped>
+              <tbody>
+                {notes.map((note) => (
+                  <tr key={note.id}>
+                    <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOfNote(note.id) }} />
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           </>
           )
         : (<Login />)}

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 export const Note = ({ note, toggleImportance }) => {
   const label = note.important
@@ -7,15 +8,14 @@ export const Note = ({ note, toggleImportance }) => {
     : 'make important'
 
   return (
-    <li>
-      <div>
-        <Link to={`/notes/${note.id}`}>
-          <strong><p>{note.content}</p></strong>
-        </Link>
-      </div>
-      <button onClick={toggleImportance}>{label}</button>
-      <hr />
-    </li>
+    <>
+      <td className='note'>
+        <Link to={`/notes/${note.id}`}>{note.content}</Link>
+      </td>
+      <td>
+        <Button onClick={toggleImportance}>{label}</Button>
+      </td>
+    </>
   )
 }
 
