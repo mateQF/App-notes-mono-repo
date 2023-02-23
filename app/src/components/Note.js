@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
+import { TableCell, Button } from '@material-ui/core'
 
 export const Note = ({ note, toggleImportance }) => {
   const label = note.important
@@ -9,12 +9,16 @@ export const Note = ({ note, toggleImportance }) => {
 
   return (
     <>
-      <td className='note'>
+      <TableCell className='note'>
         <Link to={`/notes/${note.id}`}>{note.content}</Link>
-      </td>
-      <td>
-        <Button onClick={toggleImportance}>{label}</Button>
-      </td>
+      </TableCell>
+      <TableCell>
+        {
+          label === 'make not important'
+            ? <Button variant='contained' color='secondary' onClick={toggleImportance}>{label}</Button>
+            : <Button variant='contained' color='primary' onClick={toggleImportance}>{label}</Button>
+        }
+      </TableCell>
     </>
   )
 }

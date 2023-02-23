@@ -1,11 +1,13 @@
 import React from 'react'
-import { Link, BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import Notes from './Notes'
 import { NoteDetail } from './components/NoteDetail'
 import Login from './Login'
 import { useUser } from './hooks/useUser'
 import { useNotes } from './hooks/useNotes'
 import { Navbar, Nav } from 'react-bootstrap'
+import Container from '@material-ui/core/Container'
+import { StyledLink } from './components/StyledLink'
 
 const Home = () => <h1>Home</h1>
 
@@ -21,25 +23,25 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className='container'>
+      <Container>
         <Navbar collapseOnSelect expand='lg' bg='white' variant='white'>
           <Navbar.Toggle aria-controls='responsive-navbar-nav' />
           <Navbar.Collapse>
             <Nav>
               <Nav.Link>
-                <Link to='/' style={inlineStyles}>Home</Link>
+                <StyledLink to='/' style={inlineStyles}>Home</StyledLink>
               </Nav.Link>
               <Nav.Link>
-                <Link to='/notes' style={inlineStyles}>Notes</Link>
+                <StyledLink to='/notes' style={inlineStyles}>Notes</StyledLink>
               </Nav.Link>
               <Nav.Link>
-                <Link to='/users' style={inlineStyles}>Users</Link>
+                <StyledLink to='/users' style={inlineStyles}>Users</StyledLink>
               </Nav.Link>
               <Nav.Link>
                 {
                   user
                     ? <em>Logged as {user.name}</em>
-                    : <Link to='/login' style={inlineStyles}>Login</Link>
+                    : <StyledLink to='/login' style={inlineStyles}>Login</StyledLink>
                 }
               </Nav.Link>
             </Nav>
@@ -56,7 +58,7 @@ const App = () => {
           />
           <Route path='/' element={<Home />} />
         </Routes>
-      </div>
+      </Container>
     </BrowserRouter>
   )
 }

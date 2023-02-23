@@ -1,6 +1,7 @@
 import React from 'react'
 import { useField } from '../hooks/useField'
-import { Button, Form } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
+import { Button } from './Button'
 
 export default function LoginForm ({ handleSubmit }) {
   const username = useField({ type: 'text' })
@@ -23,6 +24,7 @@ export default function LoginForm ({ handleSubmit }) {
         />
       </Form.Group>
       <Button id='form-login-button' type='submit'>Login</Button>
+
     </Form>
   )
 }

@@ -2,10 +2,10 @@ import './App.css'
 import { useState } from 'react'
 import { useNotes } from './hooks/useNotes'
 import { Note } from './components/Note'
-import CreateNoteForm from './components/CreateNoteForm'
 import Login from './Login'
+import CreateNoteForm from './components/CreateNoteForm'
 import { useUser } from './hooks/useUser'
-import Table from 'react-bootstrap/Table'
+import { TableContainer, Table, TableBody, TableRow } from '@material-ui/core'
 
 export default function Notes () {
   const { notes, addNote, toggleImportanceOf } = useNotes()
@@ -31,20 +31,26 @@ export default function Notes () {
               addNote={addNote}
               handleLogOut={logout}
             />
-            <Table striped>
-              <tbody>
-                {notes.map((note) => (
-                  <tr key={note.id}>
-                    <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOfNote(note.id) }} />
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+            <TableContainer>
+              <Table>
+                <TableBody>
+                  {notes.map((note) => (
+                    <TableRow key={note.id}>
+                      <Note key={note.id} note={note} toggleImportance={() => { toggleImportanceOfNote(note.id) }} />
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </>
           )
         : (<Login />)}
-      <div className='error'>
-        {error ? <span style={{ color: 'red' }}>{error}</span> : ''}
+      <div>
+        {
+          error
+            ? <span className='error'>{error}</span>
+            : ' '
+        }
       </div>
     </div>
   )
